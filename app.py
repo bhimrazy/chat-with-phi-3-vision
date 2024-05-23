@@ -23,8 +23,8 @@ circle_image_css = """
     margin-left: auto;
     margin-right: auto;
     border-radius: 50%;
-    width: 128px;
-    height: 128px;
+    width: 96px;
+    height: 96px;
     object-fit: cover;
 }
 </style>
@@ -58,9 +58,10 @@ def main():
         # Display chat message in chat message container
         with st.chat_message(message["role"]):
             content = message["content"]
-            # remove image token from content using re, 
-            # if present, image token eg: "<|image_1|>", "<|image_2|>", etc
-            content = re.sub(r"<\|image_\d\|>", "", content)
+            if content:
+                # remove image token from content using re, if present, 
+                # image token eg: "<|image_1|>", "<|image_2|>", etc
+                content = re.sub(r"<\|image_\d\|>", "", content)
             st.markdown(content)
 
     # React to user input
@@ -71,9 +72,7 @@ def main():
         with st.chat_message("user"):
             st.markdown(prompt)
         # Add user message to chat history
-        st.session_state.messages.append(
-            {"role": "user", "content": prompt}
-        )
+        st.session_state.messages.append({"role": "user", "content": prompt})
 
         with st.spinner("Thinking..."):
             # Placeholder function to send message to Phi3 model API
@@ -108,8 +107,10 @@ def display_header():
     )
 
     st.markdown(
-        "<div style='text-align: center;'>"
+        "<div style='text-align: center; margin-bottom:4'>"
         "Phi-3-vision is a lightweight, state-of-the-art 4.2 billion parameter multimodal model with language and vision capabilities, available with a 128k context length. <a href='https://huggingface.co/microsoft/Phi-3-vision-128k-instruct' target='_blank'>Read more</a>"
+        "<br>"
+        "<p>Made with ❤️ by <a href='https://github.com/bhimrazy' target='_blank'>Bhimraj Yadav</a></p>"
         "</div>",
         unsafe_allow_html=True,
     )

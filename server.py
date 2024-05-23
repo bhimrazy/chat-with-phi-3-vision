@@ -15,7 +15,10 @@ class Phi3VisionLitAPI(ls.LitAPI):
     def setup(self, device):
         model_id = "microsoft/Phi-3-vision-128k-instruct"
         self.model = AutoModelForCausalLM.from_pretrained(
-            model_id, device_map=device, trust_remote_code=True, torch_dtype="auto"
+            model_id,
+            device_map=device,
+            trust_remote_code=True,
+            torch_dtype="auto"
         ).eval()
 
         self.processor = AutoProcessor.from_pretrained(model_id, trust_remote_code=True)
@@ -66,5 +69,5 @@ class Phi3VisionLitAPI(ls.LitAPI):
 
 if __name__ == "__main__":
     api = Phi3VisionLitAPI()
-    server = ls.LitServer(api)
+    server = ls.LitServer(api, timeout=200)
     server.run(port=8000)
