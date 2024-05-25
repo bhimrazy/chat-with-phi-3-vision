@@ -1,10 +1,8 @@
-import json
 import os
-from io import BytesIO
-
 import litserve as ls
+from litserve.specs.openai import ChatCompletionRequest
 import torch
-from PIL import Image
+from utils import parse_messages
 from transformers import AutoModelForCausalLM, AutoProcessor
 
 os.environ["HF_DATASETS_OFFLINE"] = "1"
@@ -14,24 +12,16 @@ os.environ["TRANSFORMERS_OFFLINE"] = "1"
 class Phi3VisionLitAPI(ls.LitAPI):
     def setup(self, device):
         model_id = "microsoft/Phi-3-vision-128k-instruct"
+        self.model = None
         self.model = AutoModelForCausalLM.from_pretrained(
-            model_id,
-            device_map=device,
-            trust_remote_code=True,
-            torch_dtype="auto"
+            model_id, device_map=device, trust_remote_code=True, torch_dtype="auto"
         ).eval()
 
         self.processor = AutoProcessor.from_pretrained(model_id, trust_remote_code=True)
 
-    def decode_request(self, request):
-        parsed_request = json.loads(request)
-        messages = parsed_request["messages"]
-
-        images = []
-        for img in parsed_request["images"]:
-            image_bytes = bytes.fromhex(img["image_bytes"])
-            image = Image.open(BytesIO(image_bytes))
-            images.append(image)
+    def decode_request(self, request: ChatCompletionRequest):
+        # parse messages
+        messages, images = parse_messages(request)
 
         prompt = self.processor.tokenizer.apply_chat_template(
             messages, tokenize=False, add_generation_prompt=True
@@ -47,7 +37,6 @@ class Phi3VisionLitAPI(ls.LitAPI):
             generation_args = {
                 "max_new_tokens": 1000,
             }
-
             generate_ids = self.model.generate(
                 **model_inputs,
                 eos_token_id=self.processor.tokenizer.eos_token_id,
@@ -60,14 +49,10 @@ class Phi3VisionLitAPI(ls.LitAPI):
                 skip_special_tokens=True,
                 clean_up_tokenization_spaces=False,
             )[0]
-            return decoded
-
-    def encode_response(self, output):
-        # Convert the model output to a response payload.
-        return {"output": output}
+            yield decoded
 
 
 if __name__ == "__main__":
     api = Phi3VisionLitAPI()
-    server = ls.LitServer(api, timeout=200)
+    server = ls.LitServer(api, spec=ls.OpenAISpec())
     server.run(port=8000)
