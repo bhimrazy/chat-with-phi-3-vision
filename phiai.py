@@ -1,37 +1,31 @@
-import json
-from io import BytesIO
+import copy
 
-import requests
+from openai import OpenAI
 
-BASE_URL = "http://127.0.0.1:8000/predict"
+from utils import encode_image
 
 
 class Phi3VisionAI:
-    def __init__(self, base_url=BASE_URL):
-        self.base_url = base_url
+    def __init__(self):
+        self.client = OpenAI(
+            base_url="http://127.0.0.1:8000/v1",
+            api_key="lit",
+        )
 
     def chat(self, messages, image):
-        buffered = BytesIO()
-        image = image.convert("RGB")
-        image.save(buffered, format="JPEG")
-        image_bytes = buffered.getvalue()
-
-        # add image token to first messsage with role user, if image token is not already present
-        if "<|image_1|>" not in messages[1]["content"]:
-            messages[1]["content"] = f"<|image_1|>\n{messages[1]['content']}"
-
-        data = {
-            "images": [
-                {"image_bytes": image_bytes.hex()},
-            ],
-            "messages": messages,
-        }
-
-        print(messages)
+        input_messages = copy.deepcopy(messages)
+        input_messages[1]["content"] = [
+            {"type": "text", "text": messages[1]["content"]},
+            {
+                "type": "image_url",
+                "image_url": encode_image(image),
+            },
+        ]
         try:
-            response = requests.post(self.base_url, json=json.dumps(data))
-            output = response.json()["output"]
-            return output
+            response = self.client.chat.completions.create(
+                model="phi-3-vision", messages=input_messages
+            )
+            return response.choices[0].message.content
         except Exception as e:
             print(e)
             return None
@@ -42,9 +36,14 @@ if __name__ == "__main__":
     messages = [
         {"role": "system", "content": "You are a helpful assistant."},
         {"role": "user", "content": "What is shown in this image?"},
+        {
+            "role": "assistant",
+            "content": "The image shows a wooden boardwalk winding through a lush, green marshland. The sky is partly cloudy with ample sunlight, suggesting it might be a pleasant day. There are trees and shrubs scattered throughout the marsh, and the overall scene is serene and natural.",
+        },
+        {"role": "user", "content": "How is the weather ?"},
     ]
     from PIL import Image
 
-    image = Image.open("uploaded_images/IMG_2237.png")
+    image = Image.open("dogs-playing-in-grassy-field.jpg")
     response = client.chat(messages, image)
-    print(response)
+    print(messages, response)
