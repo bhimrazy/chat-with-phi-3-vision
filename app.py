@@ -57,12 +57,7 @@ def main():
             continue
         # Display chat message in chat message container
         with st.chat_message(message["role"]):
-            content = message["content"]
-            if content:
-                # remove image token from content using re, if present, 
-                # image token eg: "<|image_1|>", "<|image_2|>", etc
-                content = re.sub(r"<\|image_\d\|>", "", content)
-            st.markdown(content)
+            st.markdown(message["content"])
 
     # React to user input
     if prompt := st.chat_input(
@@ -76,7 +71,6 @@ def main():
 
         with st.spinner("Thinking..."):
             # Placeholder function to send message to Phi3 model API
-            # time.sleep(2)
             response = client.chat(st.session_state.messages, image)
 
             # Display Phi3 response in chat message container
