@@ -1,9 +1,11 @@
 import os
+
 import litserve as ls
-from litserve.specs.openai import ChatCompletionRequest
 import torch
-from utils import parse_messages
+from litserve.specs.openai import ChatCompletionRequest
 from transformers import AutoModelForCausalLM, AutoProcessor
+
+from utils import parse_messages
 
 os.environ["HF_DATASETS_OFFLINE"] = "1"
 os.environ["TRANSFORMERS_OFFLINE"] = "1"
