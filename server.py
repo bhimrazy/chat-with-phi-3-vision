@@ -1,9 +1,9 @@
 import os
+from threading import Thread
 
 import litserve as ls
-import torch
 from litserve.specs.openai import ChatCompletionRequest
-from transformers import AutoModelForCausalLM, AutoProcessor
+from transformers import AutoModelForCausalLM, AutoProcessor, TextIteratorStreamer
 
 from utils import parse_messages
 
@@ -34,24 +34,46 @@ class Phi3VisionLitAPI(ls.LitAPI):
         return model_inputs
 
     def predict(self, model_inputs):
-        input_len = model_inputs["input_ids"].shape[-1]
-        with torch.inference_mode():
-            generation_args = {
-                "max_new_tokens": 1000,
-            }
-            generate_ids = self.model.generate(
-                **model_inputs,
-                eos_token_id=self.processor.tokenizer.eos_token_id,
-                **generation_args,
-            )
+        # without streaming
+        # input_len = model_inputs["input_ids"].shape[-1]
+        # with torch.inference_mode():
+        #     generation_args = {
+        #         "max_new_tokens": 1000,
+        #     }
+        #     generate_ids = self.model.generate(
+        #         **model_inputs,
+        #         eos_token_id=self.processor.tokenizer.eos_token_id,
+        #         **generation_args,
+        #     )
 
-            generate_ids = generate_ids[:, input_len:]
-            decoded = self.processor.batch_decode(
-                generate_ids,
-                skip_special_tokens=True,
-                clean_up_tokenization_spaces=False,
-            )[0]
-            yield decoded
+        #     generate_ids = generate_ids[:, input_len:]
+        #     decoded = self.processor.batch_decode(
+        #         generate_ids,
+        #         skip_special_tokens=True,
+        #         clean_up_tokenization_spaces=False,
+        #     )[0]
+        #     yield decoded
+
+        # with streaming
+        # streaming
+        streamer = TextIteratorStreamer(
+            self.processor.tokenizer,
+            skip_prompt=True,
+            skip_special_tokens=True,
+            clean_up_tokenization_spaces=False,
+        )
+
+        # Run the generation in a separate thread, so that we can fetch the generated text in a non-blocking way.
+        generation_kwargs = dict(
+            model_inputs,
+            streamer=streamer,
+            max_new_tokens=4096,
+            eos_token_id=self.processor.tokenizer.eos_token_id,
+        )
+        thread = Thread(target=self.model.generate, kwargs=generation_kwargs)
+        thread.start()
+        for text in streamer:
+            yield text
 
 
 if __name__ == "__main__":
