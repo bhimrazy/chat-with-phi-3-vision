@@ -22,10 +22,11 @@ class Phi3VisionAI:
             },
         ]
         try:
-            response = self.client.chat.completions.create(
-                model="phi-3-vision", messages=input_messages
+            stream_response = self.client.chat.completions.create(
+                model="phi-3-vision", messages=input_messages, stream=True
             )
-            return response.choices[0].message.content
+            # return response.choices[0].message.content
+            return stream_response
         except Exception as e:
             print(e)
             return None

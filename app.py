@@ -69,15 +69,15 @@ def main():
         # Add user message to chat history
         st.session_state.messages.append({"role": "user", "content": prompt})
 
-        with st.spinner("Thinking..."):
-            # Placeholder function to send message to Phi3 model API
-            response = client.chat(st.session_state.messages, image)
+        # with st.spinner("Thinking..."):
+        # Placeholder function to send message to Phi3 model API
+        stream = client.chat(st.session_state.messages, image)
 
-            # Display Phi3 response in chat message container
-            with st.chat_message("assistant"):
-                st.markdown(response)
-            # Add Phi3 response to chat history
-            st.session_state.messages.append({"role": "assistant", "content": response})
+        # Display Phi3 response in chat message container
+        with st.chat_message("assistant"):
+            response = st.write_stream(stream)
+        # Add Phi3 response to chat history
+        st.session_state.messages.append({"role": "assistant", "content": response})
 
     # Save chat history before closing the app
     # save_chat_history(st.session_state.messages)
