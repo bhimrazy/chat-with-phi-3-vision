@@ -161,3 +161,8 @@ cython_debug/
 
 # lightning_studio
 .lightning_studio
+.vscode-server
+.viminfo
+.wget-*
+.vscode
+*.iml
