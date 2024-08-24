@@ -1,154 +1,90 @@
-import json
-import os
-import re
-
 import streamlit as st
-from PIL import Image
 
-from phiai import Phi3VisionAI
-
-# Define Phi3 model client
-client = Phi3VisionAI()
-
-
-# Define path to store chat history file
-CHAT_HISTORY_FILE = "messages.json"
-IMAGE_DIR = "uploaded_images"
-
-# CSS to center crop the image in a circle
-circle_image_css = """
-<style>
-.center-cropped {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    border-radius: 50%;
-    width: 96px;
-    height: 96px;
-    object-fit: cover;
-}
-</style>
-"""
-
-# Inject CSS
-st.markdown(circle_image_css, unsafe_allow_html=True)
+from src.api import client
+from src.config import SYSTEM_MESSAGE, PHI_VISION_MODELS
+from src.ui_components import file_upload, header
+from src.utils import prepare_content_with_images, all_images, all_videos
 
 
 def main():
     # Title section
-    display_header()
+    header()
 
-    # Sidebar section for image upload
-    uploaded_file, image = image_upload()
+    model_option = st.sidebar.selectbox(
+        "Select Phi Vision Model",
+        PHI_VISION_MODELS.keys(),
+        index=0,
+    )
+    MODEL = PHI_VISION_MODELS[model_option]
 
-    # Load chat history from file
-    messages = load_chat_history()
-    if messages is None:
-        messages = []
+    # Add input field for system prompt
+    st.sidebar.header("System Prompt")
+    system_prompt = st.sidebar.text_area(
+        label="Modify the prompt here.", value=SYSTEM_MESSAGE["content"]
+    )
+    SYSTEM_MESSAGE["content"] = system_prompt
+
+    # Sidebar section for file upload
+    uploaded_files, file_objects = file_upload()
 
     # Initialize chat history
     if "messages" not in st.session_state.keys():
-        st.session_state.messages = messages
+        st.session_state.messages = []
+
+    if "messages" in st.session_state.keys() and len(st.session_state.messages) > 0:
+        # add clear chat history button to sidebar
+        st.sidebar.button(
+            "Clear Chat History",
+            on_click=lambda: st.session_state.messages.clear(),
+            type="primary",
+        )
 
     # Display chat messages from history on app rerun
     for message in st.session_state.messages:
-        # skip if role is system
-        if message["role"] == "system":
-            continue
         # Display chat message in chat message container
         with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+            content = message["content"]
+            if isinstance(content, list):
+                st.markdown(content[0]["text"])
+                caption = "Thumbnail for Video" if len(content) > 4 else ""
+                urls = [item["image_url"]["url"] for item in content[1:]]
+                st.image(
+                    urls if len(urls) < 3 else urls[0],
+                    width=192,
+                    caption=caption,
+                )
+            else:
+                st.markdown(content)
 
-    # React to user input
-    if prompt := st.chat_input(
-        "Ask something", disabled=uploaded_file is None, key="prompt"
-    ):
+    if prompt := st.chat_input("Ask something", key="prompt"):
         # Display user message in chat message container
         with st.chat_message("user"):
             st.markdown(prompt)
-        # Add user message to chat history
-        st.session_state.messages.append({"role": "user", "content": prompt})
+            content = (
+                prepare_content_with_images(prompt, file_objects)
+                if file_objects
+                else prompt
+            )
+            if file_objects:
+                if all_images(uploaded_files):
+                    caption = "Thumbnail of Video" if len(uploaded_files) > 3 else ""
+                    st.image(uploaded_files, width=192, caption=caption)
 
-        # with st.spinner("Thinking..."):
-        # Placeholder function to send message to Phi3 model API
-        stream = client.chat(st.session_state.messages, image)
+                elif all_videos(uploaded_files):
+                    st.video(uploaded_files, autoplay=True)
+            # Add user message to chat history
+            st.session_state.messages.append({"role": "user", "content": content})
 
-        # Display Phi3 response in chat message container
+        # Get response from the assistant
         with st.chat_message("assistant"):
+            messages = [SYSTEM_MESSAGE, *st.session_state.messages]
+            stream = client.chat.completions.create(
+                model=MODEL, messages=messages, stream=True
+            )
             response = st.write_stream(stream)
-        # Add Phi3 response to chat history
-        st.session_state.messages.append({"role": "assistant", "content": response})
 
-    # Save chat history before closing the app
-    # save_chat_history(st.session_state.messages)
-
-    # Made with section
-    # st.markdown("---")
-    # st.markdown("Made with ❤️ by [Bhimraj Yadav](https://github.com/bhimrazy)")
-
-
-def display_header():
-    st.markdown(
-        """
-        <img src="https://azure.microsoft.com/en-us/blog/wp-content/uploads/2024/05/Azure_Blog_Isometric_Illustration-12_1260x708.jpg" class="center-cropped">
-        """,
-        unsafe_allow_html=True,
-    )
-
-    st.markdown(
-        "<h1 style='text-align: center;'>Chat with Phi-3-vision-128k-instruct</h1>",
-        unsafe_allow_html=True,
-    )
-
-    st.markdown(
-        "<div style='text-align: center; margin-bottom:4'>"
-        "Phi-3-vision is a lightweight, state-of-the-art 4.2 billion parameter multimodal model with language and vision capabilities, available with a 128k context length. <a href='https://huggingface.co/microsoft/Phi-3-vision-128k-instruct' target='_blank'>Read more</a>"
-        "<br>"
-        "<p>Made with ❤️ by <a href='https://github.com/bhimrazy' target='_blank'>Bhimraj Yadav</a></p>"
-        "</div>",
-        unsafe_allow_html=True,
-    )
-
-
-def image_upload():
-    st.sidebar.header("Upload an Image")
-    uploaded_file = st.sidebar.file_uploader(
-        "Choose an image...", type=["jpg", "jpeg", "png"], accept_multiple_files=False
-    )
-    image = None
-    if uploaded_file is not None:
-        if uploaded_file.size > 5 * 1024 * 1024:
-            st.sidebar.error("File size exceeds 5 MB. Please upload a smaller file.")
-        else:
-            image = Image.open(uploaded_file)
-            st.sidebar.image(image, caption="Uploaded Image", use_column_width=True)
-            # Save uploaded image
-            # save_uploaded_image(uploaded_file)
-    return uploaded_file, image
-
-
-def load_chat_history():
-    # Load chat history from file
-    if os.path.exists(CHAT_HISTORY_FILE):
-        with open(CHAT_HISTORY_FILE, "r") as file:
-            messages = json.load(file)
-            return messages
-
-    return None
-
-
-def save_chat_history(messages):
-    # Save chat history to file before closing the app
-    with open(CHAT_HISTORY_FILE, "w") as file:
-        json.dump(messages, file)
-
-
-def save_uploaded_image(uploaded_file):
-    # Save uploaded image to directory
-    if not os.path.exists(IMAGE_DIR):
-        os.makedirs(IMAGE_DIR)
-    with open(os.path.join(IMAGE_DIR, uploaded_file.name), "wb") as file:
-        file.write(uploaded_file.getvalue())
+            # Add assistant response to chat history
+            st.session_state.messages.append({"role": "assistant", "content": response})
 
 
 if __name__ == "__main__":
