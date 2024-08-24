@@ -54,8 +54,8 @@ class PhiVisionLitAPI(ls.LitAPI):
             self.setup(self.device, request.model)
 
         context["generation_args"] = {
-            "temperature": request.temperature or 0.2,
-            "max_new_tokens": request.max_tokens if request.max_tokens else 1000,
+            "temperature": request.temperature or 0.7,
+            "max_new_tokens": request.max_tokens if request.max_tokens else 2048,
             "do_sample": False,
         }
 
