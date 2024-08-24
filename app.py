@@ -65,7 +65,7 @@ def main():
                     st.image(uploaded_files, width=192)
 
                 elif all_videos(uploaded_files):
-                    st.video(uploaded_files, autoplay=True)
+                    st.video(uploaded_files[0], autoplay=True)
             # Add user message to chat history
             st.session_state.messages.append({"role": "user", "content": content})
 
