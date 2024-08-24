@@ -56,10 +56,9 @@ class PhiVisionLitAPI(ls.LitAPI):
         context["generation_args"] = {
             "temperature": request.temperature or 0.7,
             "max_new_tokens": request.max_tokens if request.max_tokens else 2048,
-            "do_sample": False,
+            "do_sample": True
         }
-
-        messages, images = parse_messages(request)
+        messages, images = parse_messages(request)        
         prompt = self.processor.tokenizer.apply_chat_template(
             messages, tokenize=False, add_generation_prompt=True
         )
