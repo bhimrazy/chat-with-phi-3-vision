@@ -47,7 +47,7 @@ def main():
             if isinstance(content, list):
                 st.markdown(content[0]["text"])
                 urls = [item["image_url"]["url"] for item in content[1:]]
-                st.image(urls if len(urls) < 3 else urls[0], width=192)
+                st.image(urls if len(urls) < 3 else urls[0], width=200)
             else:
                 st.markdown(content)
 
@@ -62,7 +62,7 @@ def main():
             )
             if file_objects:
                 if all_images(uploaded_files):
-                    st.image(uploaded_files, width=192)
+                    st.image(uploaded_files, width=200)
 
                 elif all_videos(uploaded_files):
                     st.video(uploaded_files[0], autoplay=True)
