@@ -8,8 +8,8 @@ SYSTEM_MESSAGE = {
 }
 
 PHI_VISION_MODELS = {
-    "phi-3-vision": "microsoft/Phi-3-vision-128k-instruct",
     "phi-3.5-vision": "microsoft/Phi-3.5-vision-instruct",
+    "phi-3-vision": "microsoft/Phi-3-vision-128k-instruct",
 }
 
 DEFAULT_MODEL = PHI_VISION_MODELS["phi-3.5-vision"]
