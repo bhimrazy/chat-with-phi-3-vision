@@ -1,5 +1,3 @@
-import concurrent.futures
-
 import streamlit as st
 
 from src.config import IMAGE_EXTENSIONS, VIDEO_EXTENSIONS
@@ -28,12 +26,12 @@ def file_upload():
         accept_multiple_files=True,
     )
 
-    if uploaded_files is not None:
+    if uploaded_files is not None and len(uploaded_files) > 0:
         # check if all of the uploaded files are images or videos
         if all_images(uploaded_files) and len(uploaded_files) <= 3:
-            st.sidebar.image(uploaded_files, use_column_width=True)
-            with concurrent.futures.ThreadPoolExecutor() as executor:
-                file_objects = list(executor.map(cached_encode_image, uploaded_files))
+            with st.sidebar.status("Processing image..."):
+                file_objects = [cached_encode_image(image) for image in uploaded_files]
+                st.sidebar.image(uploaded_files, use_column_width=True)
 
         elif all_videos(uploaded_files) and len(uploaded_files) == 1:
             with st.sidebar.status("Processing video..."):
@@ -85,5 +83,3 @@ def header():
         "</div>",
         unsafe_allow_html=True,
     )
-
-    
