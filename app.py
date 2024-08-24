@@ -46,13 +46,8 @@ def main():
             content = message["content"]
             if isinstance(content, list):
                 st.markdown(content[0]["text"])
-                caption = "Thumbnail for Video" if len(content) > 4 else ""
                 urls = [item["image_url"]["url"] for item in content[1:]]
-                st.image(
-                    urls if len(urls) < 3 else urls[0],
-                    width=192,
-                    caption=caption,
-                )
+                st.image(urls if len(urls) < 3 else urls[0], width=192)
             else:
                 st.markdown(content)
 
@@ -67,8 +62,7 @@ def main():
             )
             if file_objects:
                 if all_images(uploaded_files):
-                    caption = "Thumbnail of Video" if len(uploaded_files) > 3 else ""
-                    st.image(uploaded_files, width=192, caption=caption)
+                    st.image(uploaded_files, width=192)
 
                 elif all_videos(uploaded_files):
                     st.video(uploaded_files, autoplay=True)
