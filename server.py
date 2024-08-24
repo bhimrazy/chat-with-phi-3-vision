@@ -58,7 +58,7 @@ class PhiVisionLitAPI(ls.LitAPI):
             "max_new_tokens": request.max_tokens if request.max_tokens else 2048,
             "do_sample": True
         }
-        messages, images = parse_messages(request)        
+        messages, images = parse_messages(request)      
         prompt = self.processor.tokenizer.apply_chat_template(
             messages, tokenize=False, add_generation_prompt=True
         )
