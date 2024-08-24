@@ -170,6 +170,7 @@ def parse_messages(request: ChatCompletionRequest):
                     url = content_item.image_url.url
                     images.append(url)
                     placeholder += f"<|image_{img_count}|>\n"
+                    img_count += 1
             content = placeholder + prompt
 
         messages.append({"role": message.role, "content": content})
