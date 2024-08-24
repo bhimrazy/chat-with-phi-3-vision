@@ -2,7 +2,9 @@
   <img src="https://github.com/user-attachments/assets/ed441961-912a-4db2-9043-3ba4c7cf0b0e" height="150"/>
   <br/>
   <h1>Chat with Phi 3.5/3 Vision LLMs</h1>
-  <img src="https://pl-bolts-doc-images.s3.us-east-2.amazonaws.com/app-2/studio-badge.svg" alt="Open In Studio"/><br/>
+  <a target="_blank" href="https://lightning.ai/bhimrajyadav/studios/deploy-and-chat-with-phi-3-vision-128k-instruct">
+  <img src="https://pl-bolts-doc-images.s3.us-east-2.amazonaws.com/app-2/studio-badge.svg" alt="Open In Studio"/>
+  </a><br/>
   <a target="_blank" href="https://lightning.ai/bhimrajyadav/studios/deploy-and-chat-with-phi-3-vision-128k-instruct">
   <img src="https://github.com/user-attachments/assets/3cfab380-0fa6-4430-af21-ac5fff3928ee" alt="Chat with Phi 3.5/3 Vision LLMs" width="640" height="360">
 </a>
