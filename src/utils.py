@@ -21,8 +21,16 @@ def is_image(filename):
     return get_file_extension(filename) in IMAGE_EXTENSIONS
 
 
+def all_images(files):
+    return all(is_image(file.name) for file in files)
+
+
 def is_video(filename):
     return get_file_extension(filename) in VIDEO_EXTENSIONS
+
+
+def all_videos(files):
+    return all(is_video(file.name) for file in files)
 
 
 def read_image(source):
@@ -116,8 +124,7 @@ def prepare_content_with_images(content: str, images: List[object]):
 
 
 def encode_video(video):
-    """Encode a video to a list of base64 data URLs.
-    """
+    """Encode a video to a list of base64 data URLs."""
 
     def uniform_sample(l, n):
         gap = len(l) / n
