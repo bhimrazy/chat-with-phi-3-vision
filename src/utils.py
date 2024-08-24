@@ -80,7 +80,7 @@ def encode_image(image_source):
             image = Image.open(image_source).convert("RGB")
 
         # resize to max_size
-        max_size = 448 * 16
+        max_size = 720
         if max(image.size) > max_size:
             w, h = image.size
             if w > h:
