@@ -69,7 +69,7 @@ def header():
 
     st.markdown(
         """
-        <img src="https://azure.microsoft.com/en-us/blog/wp-content/uploads/2024/05/Azure_Blog_Isometric_Illustration-12_1260x708.jpg" class="center-cropped">
+        <img src="https://github.com/user-attachments/assets/ed441961-912a-4db2-9043-3ba4c7cf0b0e" class="center-cropped">
         """,
         unsafe_allow_html=True,
     )
@@ -80,9 +80,10 @@ def header():
     )
     st.markdown(
         "<div style='text-align: center; margin-bottom:4'>"
-        "Phi-3.5-vision is a lightweight, state-of-the-art open multimodal model built upon datasets which include synthetic data and filtered publicly available websites - with a focus on very high-quality, reasoning dense data both on text and vision. <a href='https://huggingface.co/microsoft/Phi-3.5-vision-instruct' target='_blank'>Read more</a>"
-        "<br>"
-        "<p>Made with ❤️ by <a href='https://github.com/bhimrazy' target='_blank'>Bhimraj Yadav</a></p>"
+        "<p>Phi-3.5-vision is a lightweight, state-of-the-art open multimodal model. <a href='https://huggingface.co/microsoft/Phi-3.5-vision-instruct' target='_blank'>Read more</a></p>"
+        # "<p>Made with ❤️ by <a href='https://github.com/bhimrazy' target='_blank'>Bhimraj Yadav</a></p>"
         "</div>",
         unsafe_allow_html=True,
     )
+
+    
