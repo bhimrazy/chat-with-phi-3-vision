@@ -31,7 +31,7 @@ class PhiVisionLitAPI(ls.LitAPI):
             torch_dtype="auto",
             _attn_implementation="flash_attention_2",
             quantization_config=quantization_config,
-        ).to(device)
+        ).eval()
 
         # for best performance, use num_crops=4 for multi-frame,
         # num_crops=16 for single-frame.
