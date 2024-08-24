@@ -126,7 +126,7 @@ def prepare_content_with_images(content: str, images: List[object]):
 def encode_video(video):
     """Encode a video to a list of base64 data URLs."""
 
-    def uniform_sample(l, n):
+    def uniform_sample(l, n):  # noqa: E741
         gap = len(l) / n
         idxs = [int(i * gap + gap / 2) for i in range(n)]
         return [l[i] for i in idxs]
