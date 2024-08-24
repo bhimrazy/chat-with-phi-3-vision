@@ -46,8 +46,13 @@ class PhiVisionLitAPI(ls.LitAPI):
             clean_up_tokenization_spaces=False,
         )
         self.device = device
+        self.model_id = model_id
 
     def decode_request(self, request: ChatCompletionRequest, context: dict):
+        # load model if different from the active model
+        if request.model != self.model_id:
+            self.setup(self.device, request.model)
+
         context["generation_args"] = {
             "temperature": request.temperature or 0.2,
             "max_new_tokens": request.max_tokens if request.max_tokens else 1000,
