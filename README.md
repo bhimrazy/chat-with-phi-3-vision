@@ -9,12 +9,6 @@
   <img src="https://github.com/user-attachments/assets/3cfab380-0fa6-4430-af21-ac5fff3928ee" alt="Chat with Phi 3.5/3 Vision LLMs" width="640" height="360">
 </a>
 </div>
-<div align='center'>
-  <div width='200px'>
-        <video src="https://video-cf.twimg.com/ext_tw_video/1827441482581630976/pu/vid/avc1/1280x720/clyKLv3JaU0HM5uq.mp4" width='200px' controls></video>    
-  </div>
-</div>
-
 
 ## Overview
 [**Phi-3.5-vision**](https://huggingface.co/microsoft/Phi-3.5-vision-instruct) is a lightweight, state-of-the-art open multimodal model built upon datasets which include - synthetic data and filtered publicly available websites - with a focus on very high-quality, reasoning dense data both on text and vision.
