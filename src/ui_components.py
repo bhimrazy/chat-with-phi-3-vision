@@ -105,10 +105,9 @@ def advanced_settings():
             "[Guide on Structured Outputs](https://platform.openai.com/docs/guides/structured-outputs/introduction)"
         )
 
-        initial_schema = '{"type": "json_object"}'
         # Store the initial schema in session state if not already stored
         if "schema" not in st.session_state:
-            st.session_state.schema = initial_schema
+            st.session_state.schema = '{"type": "json_object"}'
 
         def reformat_json():
             try:
