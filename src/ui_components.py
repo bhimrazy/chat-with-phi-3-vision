@@ -126,5 +126,5 @@ def advanced_settings():
             on_change=reformat_json,
         )
         validate_json(schema)
-        return schema
+        return json.loads(schema)
     return None
