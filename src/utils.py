@@ -175,6 +175,7 @@ def prep_prompt(system_prompt: str, response_format: ResponseFormat):
             "- DO NOT include any additional text, comments, or annotations outside of the JSON object.\n"
             "- Follow the structure and field names as specified in the schema exactly.\n"
             "- Follow the JSON formatting conventions.\n"
+            "- DO NOT include schema definitions in the JSON output.\n"
             "- Ensure that the JSON output strictly conforms to the schema provided without deviation.\n"
             "- Do validate your JSON output for syntax correctness and adherence to the schema before submission.\n"
             "- Strictly adhere to the schema provided above.\n"
