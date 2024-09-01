@@ -1,8 +1,8 @@
+import json
 import streamlit as st
-
 from src.api import client
 from src.config import SYSTEM_MESSAGE, PHI_VISION_MODELS
-from src.ui_components import file_upload, header
+from src.ui_components import file_upload, header, advanced_settings
 from src.utils import prepare_content_with_images, all_images, all_videos
 
 
@@ -26,6 +26,9 @@ def main():
 
     # Sidebar section for file upload
     uploaded_files, file_objects = file_upload()
+
+    # Advanced Settings
+    response_format = advanced_settings()
 
     # Initialize chat history
     if "messages" not in st.session_state.keys():
@@ -73,7 +76,10 @@ def main():
         with st.chat_message("assistant"):
             messages = [SYSTEM_MESSAGE, *st.session_state.messages]
             stream = client.chat.completions.create(
-                model=MODEL, messages=messages, stream=True
+                model=MODEL,
+                messages=messages,
+                stream=True,
+                response_format=response_format,
             )
             response = st.write_stream(stream)
 

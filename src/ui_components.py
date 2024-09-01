@@ -1,7 +1,9 @@
+import json
+
 import streamlit as st
 
 from src.config import IMAGE_EXTENSIONS, VIDEO_EXTENSIONS
-from src.utils import encode_image, encode_video, all_images, all_videos
+from src.utils import all_images, all_videos, encode_image, encode_video
 
 
 @st.cache_data
@@ -83,3 +85,46 @@ def header():
         "</div>",
         unsafe_allow_html=True,
     )
+
+
+# Advanced settings
+def validate_json(input_text):
+    try:
+        json.loads(input_text)
+    except json.JSONDecodeError:
+        st.sidebar.warning("Invalid JSON format. Please correct the input.")
+        pass
+
+
+def advanced_settings():
+    st.sidebar.header("Advanced Settings")
+    json_mode = st.sidebar.toggle("JSON mode")
+
+    if json_mode:
+        st.sidebar.markdown(
+            "[Guide on Structured Outputs](https://platform.openai.com/docs/guides/structured-outputs/introduction)"
+        )
+
+        initial_schema = '{"type": "json_object"}'
+        # Store the initial schema in session state if not already stored
+        if "schema" not in st.session_state:
+            st.session_state.schema = initial_schema
+
+        def reformat_json():
+            try:
+                json_str = st.session_state.schema
+                json_object = json.loads(json_str)
+                formatted_json = json.dumps(json_object, indent=2)
+                st.session_state.schema = formatted_json
+            except json.JSONDecodeError:
+                pass
+
+        schema = st.sidebar.text_area(
+            "Edit Schema",
+            value=st.session_state.schema,
+            help="Define the schema for structured output",
+            on_change=reformat_json,
+        )
+        validate_json(schema)
+        return schema
+    return None

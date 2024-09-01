@@ -2,12 +2,13 @@ import base64
 import concurrent.futures
 import os
 import re
+import json
 from io import BytesIO
 from typing import List
 
 import requests
 from decord import VideoReader, cpu
-from litserve.specs.openai import ChatCompletionRequest
+from litserve.specs.openai import ChatCompletionRequest, ResponseFormat
 from PIL import Image
 
 from src.config import IMAGE_EXTENSIONS, MAX_NUM_FRAMES, VIDEO_EXTENSIONS
@@ -151,6 +152,41 @@ def encode_video(video):
     return video
 
 
+def prep_prompt(system_prompt: str, response_format: ResponseFormat):
+    """
+    Prepare system prompt with response format.
+
+    response format prompt adapted from : https://github.com/SylphAI-Inc/AdalFlow
+    """
+    response_format_str = ""
+    schema = response_format.json_schema
+
+    if schema:
+        response_format_str = (
+            "<RESPONSE_FORMAT>\n"
+            "Your output should be formatted as a standard JSON instance with the following schema:\n"
+            "```\n"
+            f"{json.dumps(schema, indent=4)}\n"
+            "```\n"
+            "- Make sure to always enclose the JSON output in triple backticks (```). Please do not add anything other than valid JSON output!\n"
+            "- Use double quotes for the keys and string values.\n"
+            '- DO NOT mistake the "properties" and "type" in the schema as the actual fields in the JSON output.\n'
+            "- Follow the JSON formatting conventions.\n"
+            "</RESPONSE_FORMAT>"
+        )
+    else:
+        response_format_str = (
+            "<RESPONSE_FORMAT>\n"
+            "Your output should be formatted as a standard JSON instance.\n"
+            "- Make sure to always enclose the JSON output in triple backticks (```). Please do not add anything other than valid JSON output!\n"
+            "- Use double quotes for the keys and string values.\n"
+            '- DO NOT mistake the "properties" and "type" in the schema as the actual fields in the JSON output.\n'
+            "- Follow the JSON formatting conventions.\n"
+            "</RESPONSE_FORMAT>"
+        )
+
+    return f"{system_prompt}\n\n{response_format_str}"
+
 def parse_messages(request: ChatCompletionRequest):
     """
     Parse messages from a ChatCompletionRequest object.
@@ -158,8 +194,12 @@ def parse_messages(request: ChatCompletionRequest):
     messages = []
     images = []
     img_count = 1
+    response_format = request.response_format
     for message in request.messages:
         content = message.content
+        if message.role == "system" and response_format:
+            content = prep_prompt(content, response_format)
+
         if isinstance(content, list):
             prompt = ""
             placeholder = ""
