@@ -83,4 +83,4 @@ class PhiVisionLitAPI(ls.LitAPI):
 if __name__ == "__main__":
     api = PhiVisionLitAPI()
     server = ls.LitServer(api, spec=ls.OpenAISpec())
-    server.run(port=8000)
+    server.run(port=8000, generate_client_file=False)
