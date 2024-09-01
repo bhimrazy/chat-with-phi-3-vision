@@ -5,9 +5,13 @@
   <a target="_blank" href="https://lightning.ai/bhimrajyadav/studios/deploy-and-chat-with-phi-3-vision-128k-instruct">
   <img src="https://pl-bolts-doc-images.s3.us-east-2.amazonaws.com/app-2/studio-badge.svg" alt="Open In Studio"/>
   </a><br/>
-  <a target="_blank" href="https://lightning.ai/bhimrajyadav/studios/deploy-and-chat-with-phi-3-vision-128k-instruct">
-  <img src="https://github.com/user-attachments/assets/3cfab380-0fa6-4430-af21-ac5fff3928ee" alt="Chat with Phi 3.5/3 Vision LLMs" width="640" height="360">
-</a>
+<!--   <a target="_blank" href="https://lightning.ai/bhimrajyadav/studios/deploy-and-chat-with-phi-3-vision-128k-instruct"></a> -->
+<!--   <img src="https://github.com/user-attachments/assets/3cfab380-0fa6-4430-af21-ac5fff3928ee" alt="Chat with Phi 3.5/3 Vision LLMs" width="640" height="360"> -->
+<video src="https://github.com/user-attachments/assets/9af93c91-7d27-48f5-8cee-5f7dbfb024a3" 
+       type="video/mp4" 
+       controls 
+       style="max-width: 640px; width: 100%; height: auto;">
+</video>
 </div>
 
 ## Overview
