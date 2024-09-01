@@ -172,8 +172,13 @@ def prep_prompt(system_prompt: str, response_format: ResponseFormat):
             "- Make sure to always enclose the JSON output in triple backticks (```). Please do not add anything other than valid JSON output!\n"
             "- Use double quotes for the keys and string values.\n"
             '- DO NOT mistake the "properties" and "type" in the schema as the actual fields in the JSON output.\n'
+            "- DO NOT include any additional text, comments, or annotations outside of the JSON object.\n"
+            "- Follow the structure and field names as specified in the schema exactly.\n"
             "- Follow the JSON formatting conventions.\n"
-            "- "
+            "- Ensure that the JSON output strictly conforms to the schema provided without deviation.\n"
+            "- Do validate your JSON output for syntax correctness and adherence to the schema before submission.\n"
+            "- Strictly adhere to the schema provided above.\n"
+            "- Return the markdown JSON object as the output without any additional text or comments.\n"
             "</RESPONSE_FORMAT>"
         )
     else:
@@ -186,7 +191,6 @@ def prep_prompt(system_prompt: str, response_format: ResponseFormat):
             "- Follow the JSON formatting conventions.\n"
             "</RESPONSE_FORMAT>"
         )
-    print(f"{system_prompt}\n\n{response_format_str}")
     return f"{system_prompt}\n\n{response_format_str}"
 
 
