@@ -159,7 +159,8 @@ def prep_prompt(system_prompt: str, response_format: ResponseFormat):
     response format prompt adapted from : https://github.com/SylphAI-Inc/AdalFlow
     """
     response_format_str = ""
-    schema = response_format.json_schema
+    response_format = response_format.model_dump(exclude_none=True, by_alias=True)
+    schema = response_format.get("json_schema", None)
 
     if schema:
         response_format_str = (
@@ -172,6 +173,7 @@ def prep_prompt(system_prompt: str, response_format: ResponseFormat):
             "- Use double quotes for the keys and string values.\n"
             '- DO NOT mistake the "properties" and "type" in the schema as the actual fields in the JSON output.\n'
             "- Follow the JSON formatting conventions.\n"
+            "- "
             "</RESPONSE_FORMAT>"
         )
     else:
@@ -184,8 +186,9 @@ def prep_prompt(system_prompt: str, response_format: ResponseFormat):
             "- Follow the JSON formatting conventions.\n"
             "</RESPONSE_FORMAT>"
         )
-
+    print(f"{system_prompt}\n\n{response_format_str}")
     return f"{system_prompt}\n\n{response_format_str}"
+
 
 def parse_messages(request: ChatCompletionRequest):
     """
