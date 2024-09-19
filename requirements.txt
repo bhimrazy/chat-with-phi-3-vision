@@ -1,7 +1,6 @@
 accelerate
 bitsandbytes
 decord
-flash_attn
 litserve
 openai
 Pillow
@@ -9,3 +8,4 @@ streamlit
 torch
 torchvision
 transformers
+flash_attn
