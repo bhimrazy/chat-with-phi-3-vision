@@ -15,6 +15,7 @@
 </div>
 
 ## Overview
+
 [**Phi-3.5-vision**](https://huggingface.co/microsoft/Phi-3.5-vision-instruct) is a lightweight, state-of-the-art open multimodal model built upon datasets which include - synthetic data and filtered publicly available websites - with a focus on very high-quality, reasoning dense data both on text and vision.
 
 This model enables multi-frame image understanding, image comparison, multi-image summarization/storytelling, and video summarization, which have broad applications in office scenarios.
@@ -25,7 +26,9 @@ Follow these steps to set up and run the project:
 
 ### 1. Install Dependencies
 
-Ensure all necessary packages are installed by running:
+Download and install nvidia cuda: https://developer.nvidia.com/cuda-downloads
+
+Now ensure all necessary packages are installed by running:
 
 ```bash
 pip install -r requirements.txt
@@ -50,4 +53,3 @@ streamlit run app.py
 ## About
 
 This project is developed and maintained with ❤️ by [Bhimraj Yadav](https://github.com/bhimrazy).
-
