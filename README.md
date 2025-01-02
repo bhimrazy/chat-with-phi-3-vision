@@ -24,16 +24,20 @@ This model enables multi-frame image understanding, image comparison, multi-imag
 
 Follow these steps to set up and run the project:
 
-### 1. Install Dependencies
+### 1. Install Dependencies  
 
-Download and install nvidia cuda: https://developer.nvidia.com/cuda-downloads
+i. **Download and Install NVIDIA CUDA**  
+   Visit the [NVIDIA CUDA Toolkit Downloads page](https://developer.nvidia.com/cuda-downloads) and follow the instructions to install CUDA compatible with your system.  
 
-Now ensure all necessary packages are installed by running:
+ii. **Install Required Python Packages**  
+   Ensure you have all the necessary dependencies installed by running the following commands:  
 
-```bash
-pip install -r requirements.txt
-pip install flash_attn
-```
+   ```bash  
+   pip install -r requirements.txt  
+   pip install flash_attn  
+   ```  
+
+   If you encounter any issues while installing `flash_attn`, refer to the [FlashAttention Installation Guide](https://github.com/Dao-AILab/flash-attention?tab=readme-ov-file#installation-and-features) for troubleshooting tips and additional setup details.  
 
 ### 2. Start the API Server
 
