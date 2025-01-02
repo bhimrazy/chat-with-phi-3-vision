@@ -11,4 +11,4 @@ torchvision
 transformers
 
 # Flash attention must be installed after torch
-flash_attn
+# flash_attn
