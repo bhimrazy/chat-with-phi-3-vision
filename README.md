@@ -31,7 +31,7 @@ Download and install nvidia cuda: https://developer.nvidia.com/cuda-downloads
 Now ensure all necessary packages are installed by running:
 
 ```bash
-pip install -r requirements.txt
+pip install torch torchvision && pip install -r requirements.txt
 ```
 
 ### 2. Start the API Server
