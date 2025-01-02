@@ -1,3 +1,4 @@
+# Install torch and other core dependencies first
 accelerate
 bitsandbytes
 decord
@@ -8,4 +9,6 @@ streamlit
 torch
 torchvision
 transformers
+
+# Flash attention must be installed after torch
 flash_attn
